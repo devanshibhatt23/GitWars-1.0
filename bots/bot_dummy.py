@@ -126,13 +126,13 @@ def update(context):
                 dy /= length
 
             # Half the time move closer
-            if random.random() < 0.5:
+            if random.random() < 0.1:
                 return ("MOVE", (dx, dy))
 
             # Half the time shoot (slightly inaccurate)
             if me["ammo"] > 0:
                 shoot_angle = angle_to(my_x, my_y, enemy["x"], enemy["y"])
-                shoot_angle += random.uniform(-10, 10)
+                shoot_angle += random.uniform(-100, 100)
                 return ("SHOOT", shoot_angle)
 
         # Fallback random move

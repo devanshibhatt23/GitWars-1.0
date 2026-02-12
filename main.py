@@ -1387,15 +1387,14 @@ class GitWarsEngine:
         bots_dir = os.path.join(os.path.dirname(__file__), "bots")
         bot_files = sorted(glob.glob(os.path.join(bots_dir, "bot_*.py")))
         
-        # Extract team names from filenames (bot_teamname.py -> teamname)
-        bot_info = []
+        # Separate real bots from dummy bot
+        dummy_bot_path = os.path.join(bots_dir, "bot_dummy.py")
+        real_bots = []
         for bot_file in bot_files:
             filename = os.path.basename(bot_file)
             team_name = filename[4:-3]  # Remove "bot_" prefix and ".py" suffix
-            bot_info.append((bot_file, team_name))
-        
-        # Fallback to my_bot.py if not enough bots
-        default_bot_path = os.path.join(bots_dir, "my_bot.py")
+            if team_name != "dummy":
+                real_bots.append((bot_file, team_name))
         
         for i in range(num_tanks):
             angle = (2 * math.pi * i) / num_tanks
@@ -1412,14 +1411,14 @@ class GitWarsEngine:
                 tank.health = new_health
                 tank.max_health = new_health
             
-            # Load bot and assign team name
-            if i < len(bot_info):
-                bot_path, team_name = bot_info[i]
+            # Load bot: real bots first, then fill remaining with dummy
+            if i < len(real_bots):
+                bot_path, team_name = real_bots[i]
                 tank.team_name = team_name
                 self.bots[i] = BotLoader(bot_path)
-            elif os.path.exists(default_bot_path):
-                tank.team_name = f"Bot_{i}"
-                self.bots[i] = BotLoader(default_bot_path)
+            elif os.path.exists(dummy_bot_path):
+                tank.team_name = f"dummy_{i}"
+                self.bots[i] = BotLoader(dummy_bot_path)
             
             self.tanks.append(tank)
         
