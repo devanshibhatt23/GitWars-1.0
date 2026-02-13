@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# But not .gitignore itself
+!.gitignore
+
+# Allow the bots directory
+!bots/
+
+# Allow only bot_* files inside bots/
+!bots/bot_*
